@@ -57,12 +57,20 @@ class YoutubeD():
 
     def SearchAndDownload(self,playlist,out):
         for song in playlist:
-            result = pytube.Search(song["name"]+" "+song["artist"]).results[0].watch_url
-            yt = pytube.YouTube(result)
-            stream = yt.streams.filter(only_audio=True).first()
+            try:
+                result = pytube.Search(song["name"]+" "+song["artist"]).results[0].watch_url
+                yt = pytube.YouTube(result)
+                stream = yt.streams.filter(only_audio=True).first()
 
-            stream.download(output_path=out, filename=song["name"]+".mp3")
-            print("downloaded: "+song["name"])
+                if "?" in song["name"]:
+                    stream.download(output_path=out+"/", filename=song["name"].split("?")[0]+".mp3")
+                else:
+                    stream.download(output_path=out+"/", filename=song["name"]+".mp3")
+
+                print("downloaded: "+song["name"])
+            except:
+                print("Couldn't download: "+song["name"])
+            
 
     
 sp = Spotify()
